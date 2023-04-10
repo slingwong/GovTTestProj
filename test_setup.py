@@ -19,3 +19,10 @@ class SessionID:
         driver.quit()
 
         return cookies["value"]
+
+"""
+    @staticmethod
+    def system_logout():
+        driver = webdriver.Chrome()
+        driver.find_element(By.CLASS_NAME, 'btn-small').click()
+"""
