@@ -1,6 +1,7 @@
+import mariadb
 from behave import *
 import requests
-from test_setup import SessionID
+from Features.test_setup import SessionID
 
 use_step_matcher("re")
 
@@ -25,6 +26,7 @@ def step_impl(context, username, password):
 
 
 @when("I add a hero with payload details")
+@when("I add a duplicate hero with payload details")
 def step_impl(context):
     payload = {}
     for row in context.table:
@@ -36,8 +38,14 @@ def step_impl(context):
             payload["deathDate"] = None
         else:
             payload["deathDate"] = row['deathDate']
-        payload["salary"] = float(row['salary'])
-        payload["taxPaid"] = int(row['taxPaid'])
+        try:
+            payload["salary"] = int(row['salary'])
+        except ValueError:
+            payload["salary"] = float(row['salary'])
+        try:
+            payload["taxPaid"] = int(row['taxPaid'])
+        except ValueError:
+            payload["taxPaid"] = float(row['taxPaid'])
         if row["browniePoints"] == 'None':
             payload["browniePoints"] = None
         else:
@@ -45,6 +53,7 @@ def step_impl(context):
 
     print(f"Processing row with natid {row['natid']}")
     context.response = create_hero(context.j_session_id, payload)
+
     print(context.response.content)
     print(context.response.status_code)
 
