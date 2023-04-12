@@ -48,3 +48,4 @@ class UploadFile:
 
         WebDriverWait(driver, timeout=10) \
             .until(expected_conditions.element_to_be_clickable((By.ID, 'upload-csv-file')))
+        driver.quit()

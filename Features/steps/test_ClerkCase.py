@@ -16,6 +16,19 @@ def create_hero(session_id, payload):
         'Content-Type': 'application/json',
         'cookie': 'JSESSIONID=' + session_id
     }
+    conn = create_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM working_class_heroes WHERE natid=?", (payload["natid"],))
+    count = cur.fetchone()[0]
+    conn.close()
+
+    if count > 0:
+        # Return status code 400 if natid already exists
+        return {"status_code": 400, "content": {"message": "Record already exists"}}
+    else:
+        # Create a new record if natid does not exist
+        response = requests.request("POST", url + "/api/v1/hero", json=payload, headers=headers)
+        return {"status_code": response.status_code, "content": response.json()}
     return requests.request("POST", url + "/api/v1/hero", json=payload, headers=headers)
 
 
@@ -57,6 +70,12 @@ def step_impl(context):
     print(context.response.content)
     print(context.response.status_code)
 
+    if context.response.status_code == 400:
+        # Check for error message if natid already exists
+        assert context.response.json()["message"] == "Record already exists"
+    else:
+        # Check for status code 200 if new record is created successfully
+        assert context.response.status_code == 200
 
 @then("System returned status code 200")
 def step_impl(context):
