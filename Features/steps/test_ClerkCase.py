@@ -2,6 +2,7 @@ import mariadb
 from behave import *
 import requests
 from Features.test_setup import SessionID
+from Features.environment import count_records
 
 use_step_matcher("re")
 
@@ -52,8 +53,8 @@ def step_impl(context):
             payload["browniePoints"] = int(row['browniePoints'])
 
     print(f"Processing row with natid {row['natid']}")
+    context.initial_count = count_records()
     context.response = create_hero(context.j_session_id, payload)
-
     print(context.response.content)
     print(context.response.status_code)
 
@@ -66,10 +67,26 @@ def step_impl(context):
 
 
 #    assert context.response.status_code == 200
-
-
 @then("System returned status code 400")
 def step_impl(context):
     if context.response.status_code != 400:
         raise AssertionError(f"Unexpected status code: {context.response.status_code}")
+    return
+
+
+@step("Database record should increase by 1 successfully")
+def step_impl(context):
+    initial_count = context.initial_count
+    new_count = count_records()
+    if new_count != initial_count + 1:
+        raise AssertionError("Record was not added successfully")
+    return
+
+
+@step("Database record should remain the same")
+def step_impl(context):
+    initial_count = context.initial_count
+    new_count = count_records()
+    if new_count != initial_count:
+        raise AssertionError("Error, invalid record inserted successfully")
     return
