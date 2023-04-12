@@ -39,7 +39,4 @@ def count_records():
     cur.execute("SELECT COUNT(*) FROM working_class_heroes")
     count = cur.fetchone()[0]
     conn.close()
-    #    print("You have " + str(count) + " records in the database")
     return count
-
-

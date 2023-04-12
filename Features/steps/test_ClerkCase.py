@@ -1,16 +1,14 @@
 import mariadb
 from behave import *
 import requests
-from Features.test_setup import SessionID
-from Features.environment import count_records
+from selenium import webdriver
+
+from Features.test_setup import SessionID, UploadFile
+from Features.environment import count_records, create_db_connection
 
 use_step_matcher("re")
 
 url = "http://localhost:9997"
-
-
-# @given('I will perform one round of test cleanup')
-# def step_impl(context):
 
 
 def create_hero(session_id, payload):
@@ -55,6 +53,7 @@ def step_impl(context):
     print(f"Processing row with natid {row['natid']}")
     context.initial_count = count_records()
     context.response = create_hero(context.j_session_id, payload)
+
     print(context.response.content)
     print(context.response.status_code)
 
@@ -90,3 +89,17 @@ def step_impl(context):
     if new_count != initial_count:
         raise AssertionError("Error, invalid record inserted successfully")
     return
+
+
+@step("Database record count should not increase")
+def step_impl(context):
+    initial_count = context.initial_count
+    new_count = count_records()
+    if new_count != initial_count:
+        raise AssertionError("Record was not added successfully")
+    return
+
+
+@given("I clicked on Upload a csv file button and choose a valid CSV file")
+def step_impl(context):
+    UploadFile.upload_csv_file()
