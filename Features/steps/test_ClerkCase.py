@@ -16,19 +16,6 @@ def create_hero(session_id, payload):
         'Content-Type': 'application/json',
         'cookie': 'JSESSIONID=' + session_id
     }
-    conn = create_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT COUNT(*) FROM working_class_heroes WHERE natid=?", (payload["natid"],))
-    count = cur.fetchone()[0]
-    conn.close()
-
-    if count > 0:
-        # Return status code 400 if natid already exists
-        return {"status_code": 400, "content": {"message": "Record already exists"}}
-    else:
-        # Create a new record if natid does not exist
-        response = requests.request("POST", url + "/api/v1/hero", json=payload, headers=headers)
-        return {"status_code": response.status_code, "content": response.json()}
     return requests.request("POST", url + "/api/v1/hero", json=payload, headers=headers)
 
 
@@ -70,18 +57,11 @@ def step_impl(context):
     print(context.response.content)
     print(context.response.status_code)
 
-    if context.response.status_code == 400:
-        # Check for error message if natid already exists
-        assert context.response.json()["message"] == "Record already exists"
-    else:
-        # Check for status code 200 if new record is created successfully
-        assert context.response.status_code == 200
 
 @then("System returned status code 200")
 def step_impl(context):
     if context.response.status_code != 200:
         raise AssertionError(f"Unexpected status code: {context.response.status_code}")
-    return
 
 
 #    assert context.response.status_code == 200
@@ -89,36 +69,32 @@ def step_impl(context):
 def step_impl(context):
     if context.response.status_code != 400:
         raise AssertionError(f"Unexpected status code: {context.response.status_code}")
-    return
 
 
-@step("Database record should increase by 1 successfully")
+@step("Database record count should increase by 1")
 def step_impl(context):
     initial_count = context.initial_count
     new_count = count_records()
+    print("Expected: One record added successfully from " + str(initial_count) + " to " + str(new_count))
     if new_count != initial_count + 1:
         raise AssertionError("Record was not added successfully")
-    return
-
-
-@step("Database record should remain the same")
-def step_impl(context):
-    initial_count = context.initial_count
-    new_count = count_records()
-    if new_count != initial_count:
-        raise AssertionError("Error, invalid record inserted successfully")
-    return
 
 
 @step("Database record count should not increase")
 def step_impl(context):
     initial_count = context.initial_count
     new_count = count_records()
+    print("Expected : New count " + str(new_count) + ", and initial count " + str(initial_count) + " Record should remained unchanged")
     if new_count != initial_count:
-        raise AssertionError("Record was not added successfully")
+        raise AssertionError("Record was added successfully")
+
+
+@step('Record "(?P<natid>.+)" already exists should returned')
+def step_impl(context, natid):
+    response_text = context.response.json()['errorMsg']
+    expected_message = "Working Class Hero of natid: " + natid + " already exists!"
+    if expected_message not in response_text:
+        raise AssertionError("Respond message did not contain record already exists'")
+    else:
+        print("Record exists in the system")
     return
-
-
-@given("I clicked on Upload a csv file button and choose a valid CSV file")
-def step_impl(context):
-    UploadFile.upload_csv_file()

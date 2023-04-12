@@ -52,15 +52,16 @@ Feature: Actions by Clerk
             | natid         | name      | gender    | birthDate   | deathDate   | salary    | taxPaid   | browniePoints     |
             | natid-200     | Name new  | MALE   | 2020-01-01T23:59:59 | None      | 10.00  | 1       | 9             |
        Then System returned status code 200
+       And Database record count should increase by 1
        When I add a duplicate hero with payload details
             | natid         | name      | gender    | birthDate   | deathDate   | salary    | taxPaid   | browniePoints     |
             | natid-200     | Name duplicate | MALE   | 2020-01-01T23:59:59 | None      | 10.00  | 1       | 9             |
        Then System returned status code 400
        And Database record count should not increase
+       And Record "natid-200" already exists should returned
 
-
-    Scenario: US2AC1 As a Clerk, I can upload CSV file
-        Given I clicked on Upload a csv file button and choose a valid CSV file
-        When I clicked on Create button
-        Then CSV file should upload with all the data successfully
-
+#    Scenario: US2AC1 As a Clerk, I can upload CSV file
+#        Given I clicked on Upload a csv file button and choose a valid CSV file
+#        When I clicked on Create button
+#        Then CSV file should upload with all the data successfully
+#

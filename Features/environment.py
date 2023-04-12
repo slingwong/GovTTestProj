@@ -40,3 +40,4 @@ def count_records():
     count = cur.fetchone()[0]
     conn.close()
     return count
+
