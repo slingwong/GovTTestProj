@@ -1,10 +1,8 @@
-import sys
-
 import mariadb
 
 
 def before_all(context):
-    print('Before all executed')
+    print('Before scenario all')
     test_teardown_function()
 
 
@@ -41,3 +39,6 @@ def count_records():
     conn.close()
     return count
 
+
+def after_all(context):
+    context.driver.quit()

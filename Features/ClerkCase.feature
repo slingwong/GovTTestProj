@@ -60,8 +60,8 @@ Feature: Actions by Clerk
        And Database record count should not increase
        And Record "natid-200" already exists should returned
 
-#    Scenario: US2AC1 As a Clerk, I can upload CSV file
-#        Given I clicked on Upload a csv file button and choose a valid CSV file
-#        When I clicked on Create button
-#        Then CSV file should upload with all the data successfully
-#
+    Scenario: US2AC1 As a Clerk, I can upload CSV file
+        Given I clicked on Upload a csv file button and choose a valid CSV file
+        When I clicked on Create button
+        Then CSV file should upload with all the data successfully
+
