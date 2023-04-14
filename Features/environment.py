@@ -1,8 +1,9 @@
 import mariadb
+from selenium import webdriver
 
 
 def before_all(context):
-    print('Before scenario all')
+    print('Before all')
     test_teardown_function()
 
 
@@ -39,6 +40,3 @@ def count_records():
     conn.close()
     return count
 
-
-def after_all(context):
-    context.driver.quit()

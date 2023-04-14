@@ -1,11 +1,9 @@
-from unittest import result
 
-import mariadb
 from behave import *
 import requests
 
-from Features.test_setup import SessionID, upload_csv_file, create_csv_file
-from Features.environment import count_records, create_db_connection
+from Features.test_setup import SessionID, CSV
+from Features.environment import count_records
 
 use_step_matcher("re")
 
@@ -105,17 +103,16 @@ def step_impl(context, natid):
 # User Story 2
 @given("I clicked on Upload a csv file button and choose a valid CSV file")
 def step_impl(context):
-    upload_csv_file()
+    CSV.upload_csv_file()
 
 
 @when("I clicked on Create button")
 def step_impl(context):
-    create_csv_file()
+    CSV.create_csv_file()
 
 
 @then("CSV file should upload with all the data successfully")
 def step_impl(context):
-    result = create_csv_file()
+    result = CSV.create_csv_file()
     assert result == "Created Successfully!"
-
 

@@ -1,3 +1,4 @@
+@feature
 Feature: Actions by Clerk
 
     Scenario Outline: US1AC1 Post a new hero
