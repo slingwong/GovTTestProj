@@ -1,5 +1,4 @@
 import mariadb
-from selenium import webdriver
 
 
 def before_all(context):

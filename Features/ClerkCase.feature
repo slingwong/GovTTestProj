@@ -12,7 +12,7 @@ Feature: Actions by Clerk
 
         Examples:
             | natid         | name  | gender | birthDate           | deathDate | salary | taxPaid | browniePoints |
-            | natid-12      | hello | MALE   | 2020-01-01T23:59:59 | None      | 10.00  | 1       | 9             |
+            | natid-12      | Shelby Willms | MALE   | 2020-01-01T23:59:59 | None      | 10.00  | 1       | 9             |
             | natid-9999999 | hello | MALE   | 2020-01-01T23:59:59 | None      | 10.00  | 1       | 9             |
             | natid-0       | hello | MALE   | 2020-01-01T23:59:59 | None      | 10.00  | 1       | 9             |
             | natid-13      | a     | MALE   | 2020-01-01T23:59:59 | None      | 10.00  | 1       | 9             |

@@ -1,7 +1,6 @@
 import os
 
 from selenium import webdriver
-from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
@@ -69,6 +68,7 @@ class Search:
     def table_display():
         WebDriverWait(driver, timeout=10).until(ec.presence_of_element_located((By.ID, 'search-all-table_filter')))
         assert driver.find_element(By.ID, 'search-all-table_filter').is_displayed()
+        driver.implicitly_wait(30)
         print("Table display on page successfully")
 
     @staticmethod
@@ -83,25 +83,25 @@ class Search:
             ec.presence_of_element_located((By.XPATH, '//*[@id="search-all-table_filter"]/label/input')))
         search_box.clear()
         search_box.send_keys(hero)
+        WebDriverWait(driver, timeout=10).until(
+            ec.presence_of_element_located((By.XPATH, '//*[@id="search-all-table_processing"]')))
 
     @staticmethod
-    def search_btn():
-        try:
-            search_button = driver.find_element(By.XPATH,
-                                                "//*[@class='btn btn-primary' and contains(text(), 'Search')]")
-            search_button.click()
-        except Exception as e:
-            print(f"Error clicking search button: {e}")
+    def result_display():
+        WebDriverWait(driver, timeout=10).until(ec.presence_of_element_located((By.XPATH, '//*[@id="search-all-table'
+                                                                                          '"]/tbody/tr/td')))
+        assert driver.find_element(By.XPATH, '//*[@id="search-all-table"]/tbody/tr/td').is_displayed()
+        print("Result display on page successfully")
 
     @staticmethod
     def get_search_result():
-        search_result = driver.find_element(By.XPATH, '//*[@id="search-all-table"]/tbody/tr[1]/td[1]').text
+        search_result = driver.find_element(By.XPATH, '//*[@id="search-all-table"]/tbody/tr/td').text
         return search_result
 
     @staticmethod
     def get_no_record():
         search_record = driver.find_element(By.XPATH,
-                                            '//*[@id="search-all-table"]/tbody/tr/td').text
+                                            '//*[@id="search-all-table_info"]').text
         return search_record
 
     @staticmethod
@@ -128,3 +128,20 @@ class SessionID:
         driver.quit()
 
         return cookies["value"]
+
+
+class TaxRelief:
+    @staticmethod
+    def generate_tax():
+        global driver
+        url = "http://localhost:9997"
+        driver = webdriver.Chrome()
+
+        driver.get(url + "/login")
+        driver.find_element(By.ID, 'username-in').send_keys('bk')
+        driver.find_element(By.ID, 'password-in').send_keys('bk')
+        driver.find_element(By.CLASS_NAME, 'btn-primary').click()
+
+    @staticmethod
+    def tax_generate_button():
+        driver.find_element(By.ID, 'tax_relief_btn').click()

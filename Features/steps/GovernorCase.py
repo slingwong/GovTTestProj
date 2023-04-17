@@ -1,8 +1,6 @@
-from time import sleep
-
 from behave import *
 
-from Features.test_setup import SessionID, Search
+from Features.test_setup import Search
 
 use_step_matcher("re")
 
@@ -16,19 +14,13 @@ def step_impl(context, username, password):
 @then("I should see a list of all heroes")
 def step_impl(context):
     Search.table_display()
-    sleep(3)
     Search.table_row()
 
 
 @when('I type "(?P<search_text>.+)" into the search bar')
 def step_impl(context, search_text):
     Search.search_hero(search_text)
-
-
-@step("I click on the Search button")
-def step_impl(context):
-    Search.search_btn()
-    sleep(5)
+    Search.result_display()
 
 
 @then('I should see a hero with the natid "(?P<search_text>.+)"')
@@ -38,16 +30,20 @@ def step_impl(context, search_text):
 
     if search_result == search_text:
         assert search_result == search_text, f"Expected {search_text}, but got {search_result}"
+        print(search_result == search_text)
     else:
+
         assert no_record == "No records found!", f"Expected {search_text}, but got {search_result}"
+        print(search_result != search_text)
 
 
 @then('I should see a hero with the name "(?P<search_text>.+)"')
 def step_impl(context, search_text):
-    search_name = Search.get_search_name()
     no_record = Search.get_no_record()
 
-    if search_name == search_text:
+    if no_record != "Showing 0 to 0 of 0 entries":
+        search_name = Search.get_search_name()
         assert search_name == search_text, f"Expected {search_text}, but got {search_name}"
+        print(search_text == search_name)
     else:
-        assert no_record == "No records found!", f"Expected {search_text}, but got {search_name}"
+        assert no_record == "No records found!", f"Expected {search_text}"
